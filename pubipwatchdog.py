@@ -25,7 +25,6 @@ def emailNewIP(ip):
 
     # Credentials (if needed)
     username = 'pubipwatchdog'
-    password = 'beans187'
 
     # The actual mail send
     server = smtplib.SMTP('smtp.gmail.com:587')
