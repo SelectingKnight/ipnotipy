@@ -7,7 +7,7 @@ import sys
 # This will check if our public IP changed by comparing the freshly pulled
 # IP against our pubip file that contains the last pulled IP address
 def checkIfIpChanged(ip):
-    ipFile = open(sys.argv[1], "r")
+    ipFile = open(sys.argv[1] + ".pubip", "r")
     if(ipFile.read() == ip):
         ipFile.close()
         return False
@@ -17,18 +17,18 @@ def checkIfIpChanged(ip):
         return True
 
 def doesPubIPfileExist():
-    ipFile = subprocess.Popen(["ls", "-a", ome/mathew/"], stdout=subprocess.PIPE).communicate()[0]
+    ipFile = subprocess.Popen(["ls", "-a", sys.argv[1]], stdout=subprocess.PIPE).communicate()[0]
     if".pubip" in ipFile:
         return
     else:
-        ipFile = open("/home/mathew/.pubip", "w")
+        ipFile = open(sys.argv[1] + ".pubip", "w")
         ipFile.write("0.0.0.0")
         ipFile.close()
         return
 
 # This will write the new IP to the .pubip file if it has changed
 def writeNewIPToFile(ip):
-    ipFile = open("/home/mathew/.pubip", "w")
+    ipFile = open(sys.argv[1] + ".pubip", "w")
     ipFile.write(ip)
     ipFile.close()
 
@@ -52,9 +52,11 @@ def emailNewIP(ip):
 
 # This is because I like C get over it.
 def main():
-    doesPubIPfileExist(sys.argv[1])
+    doesPubIPfileExist()
     publicIP = subprocess.Popen(["curl", "icanhazip.com"], stdout=subprocess.PIPE).communicate()[0]
     if(checkIfIpChanged(str(publicIP))):
-        emailNewIP(str(publicIP))
+        #emailNewIP(str(publicIP))
+        print(publicIP)
+        print("SUccess")
 
 main()
