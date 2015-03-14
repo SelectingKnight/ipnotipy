@@ -1,3 +1,5 @@
+#!/bin/python2.7
+
 import smtplib
 import subprocess
 
@@ -13,6 +15,16 @@ def checkIfIpChanged(ip):
         writeNewIPToFile(ip)
         return True
 
+def doesPubIPfileExist():
+    ipFile = subprocess.Popen(["ls", "-a", "/home/mathew/"], stdout=subprocess.PIPE).communicate()[0]
+    if".pubip" in ipFile:
+        return
+    else:
+        ipFile = open("/home/mathew/.pubip", "w")
+        ipFile.write("0.0.0.0")
+        ipFile.close()
+        return
+
 # This will write the new IP to the .pubip file if it has changed
 def writeNewIPToFile(ip):
     ipFile = open("/home/mathew/.pubip", "w")
@@ -27,7 +39,8 @@ def emailNewIP(ip):
 
 
     # Credentials (if needed)
-    username = 'pubipwatchdog'
+    username = ''
+    password = ''
 
     # The actual mail send
     server = smtplib.SMTP('smtp.gmail.com:587')
@@ -38,12 +51,9 @@ def emailNewIP(ip):
 
 # This is because I like C get over it.
 def main():
+    doesPubIPfileExist()
     publicIP = subprocess.Popen(["curl", "icanhazip.com"], stdout=subprocess.PIPE).communicate()[0]
-    print("String of PublicIP " + str(publicIP))
     if(checkIfIpChanged(str(publicIP))):
-        #emailNewIP(str(publicIP))
-        print(publicIP)
-    else:
-        print("IP didn't change.")
+        emailNewIP(str(publicIP))
 
 main()
