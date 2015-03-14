@@ -2,11 +2,12 @@
 
 import smtplib
 import subprocess
+import sys
 
 # This will check if our public IP changed by comparing the freshly pulled
 # IP against our pubip file that contains the last pulled IP address
 def checkIfIpChanged(ip):
-    ipFile = open("/home/mathew/.pubip", "r")
+    ipFile = open(sys.argv[1], "r")
     if(ipFile.read() == ip):
         ipFile.close()
         return False
@@ -16,7 +17,7 @@ def checkIfIpChanged(ip):
         return True
 
 def doesPubIPfileExist():
-    ipFile = subprocess.Popen(["ls", "-a", "/home/mathew/"], stdout=subprocess.PIPE).communicate()[0]
+    ipFile = subprocess.Popen(["ls", "-a", ome/mathew/"], stdout=subprocess.PIPE).communicate()[0]
     if".pubip" in ipFile:
         return
     else:
@@ -51,7 +52,7 @@ def emailNewIP(ip):
 
 # This is because I like C get over it.
 def main():
-    doesPubIPfileExist()
+    doesPubIPfileExist(sys.argv[1])
     publicIP = subprocess.Popen(["curl", "icanhazip.com"], stdout=subprocess.PIPE).communicate()[0]
     if(checkIfIpChanged(str(publicIP))):
         emailNewIP(str(publicIP))
