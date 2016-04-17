@@ -16,11 +16,12 @@ def checkIfIpChanged(ip, fpath):
         writeNewIPToFile(ip, fpath)
         return True
 
-# This runs everytime the script does to verify the pubip file exists because if
-# it didn't exist and we ran the rest of the script it would crash due to the way
-# Python's open function works.
+# This runs everytime the script does to verify the pubip file exists because
+# if it didn't exist and we ran the rest of the script it would crash due to
+# the way Python's open function works.
 def doesPubIPfileExist(fpath):
-    ipFile = subprocess.Popen(["ls", "-a", fpath], stdout=subprocess.PIPE).communicate()[0]
+    ipFile = subprocess.Popen(["ls", "-a", fpath],
+                              stdout=subprocess.PIPE).communicate()[0]
     if".pubip" in ipFile:
         return
     else:
@@ -56,22 +57,18 @@ def emailNewIP(ip, uname, passwd):
 # Interperets the command line args we get and returns the usable values
 def scanCmdArguments():
     for index, arg in enumerate(sys.argv):
-        if arg == "-p":
+        if arg == "-f" or arg == "--file":
             # if we see the -p flag then the next element will be a space so
             # we go to the next next element.
             fpath = sys.argv[index + 1]
-        elif arg ==  "-u":
+        elif arg ==  "-u" or arg == "--username":
             uname = sys.argv[index + 1]
-        elif arg == "-ep":
+        elif arg == "-p" or arg == "--password":
             passwd = sys.argv[index + 1]
     return fpath, uname, passwd
 
-# This is because I like C get over it.
-def main():
-    fpath, uname, passwd = scanCmdArguments()
-    doesPubIPfileExist(fpath)
-    publicIP = subprocess.Popen(["curl", "icanhazip.com"], stdout=subprocess.PIPE).communicate()[0]
-    if(checkIfIpChanged(str(publicIP), fpath)):
-        emailNewIP(str(publicIP), uname, passwd)
-
-main()
+fpath, uname, passwd = scanCmdArguments()
+doesPubIPfileExist(fpath)
+publicIP = subprocess.Popen(["curl", "icanhazip.com"], stdout=subprocess.PIPE).communicate()[0]
+if(checkIfIpChanged(str(publicIP), fpath)):
+    emailNewIP(str(publicIP), uname, passwd)
